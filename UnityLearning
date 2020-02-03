@@ -1,3 +1,7 @@
 2020.2.3 Unity学习笔记开篇
 
 1、使用HDR imagine更改天空球。在https://www.hdrihaven.com/下载一幅HDR图片，放入Unity。新建一个material，将其Shader改成Skybox -> Panoramic。其中Panoramic的意思为“全景的”。将HDRI放入，制成天空球，拖到Scene中。
+
+2、在导入Unity Chan后无法运行，不断报错。依照报错提示，进入UnityChan目录，将其中AutoBlinks.cs文件中的第八行using System.Security.Policy注释掉。
+
+
