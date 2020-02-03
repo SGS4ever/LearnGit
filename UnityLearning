@@ -4,4 +4,6 @@
 
 2、在导入Unity Chan后无法运行，不断报错。依照报错提示，进入UnityChan目录，将其中AutoBlinks.cs文件中的第八行using System.Security.Policy注释掉。
 
+3、添加墙体之后，人物磨墙可能出现旋转，此时要点击人物，在Rigridbody栏内的Constraints中将XYZ轴锁定。
+
 
