@@ -6,4 +6,6 @@
 
 3、添加墙体之后，人物磨墙可能出现旋转，此时要点击人物，在Rigridbody栏内的Constraints中将XYZ轴锁定。
 
+4、旋转有矩阵旋转、欧拉旋转和四元数旋转。都不会。物体transform的rotation属性可以使用函数transform.localEulerAngles获得和改变，改变方法直接使用new Vector3赋值。用这种方法得到的数值就是点选物体之后右侧栏中的数值，而用transform.rotation得到的数值并不是右边栏的数值，需要注意。
+
 
