@@ -8,4 +8,12 @@
 
 4、旋转有矩阵旋转、欧拉旋转和四元数旋转。都不会。物体transform的rotation属性可以使用函数transform.localEulerAngles获得和改变，改变方法直接使用new Vector3赋值。用这种方法得到的数值就是点选物体之后右侧栏中的数值，而用transform.rotation得到的数值并不是右边栏的数值，需要注意。
 
+5、将玩家输入转化为信号，利用四个变量KeyUp、KeyDown、KeyLeft和KeyRight表示键盘按键，用两个变量Dup和Dright就可以表示方向信号。具体语句为：
+Dup = (Input.GetKey(KeyUp) ? 1.0f : 0) - (Input.GetKey(KeyDown) ? 1.0f : 0)
+Dright类似。
+如此，当玩家按下KeyUp时，Dup = 1；当玩家按下KeyDown时，Dup = -1，同时按下则为0。
+Dright同理。
+
+6、将信号的变化平滑处理，使用Mathf.SmoothDamp()函数。第一个参数是当前数值，第二个参数是目标数值，第三个参数是当前数值的引用，第四个参数是完成变化所需要的时间。第三个参数即引用参数在传递时需要在参数名之前加上ref。此外，设置一个布尔变量AllowInput，如果该值为false，则直接将targetDup等变量都设置为0。
+
 
