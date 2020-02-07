@@ -16,4 +16,21 @@ Dright同理。
 
 6、将信号的变化平滑处理，使用Mathf.SmoothDamp()函数。第一个参数是当前数值，第二个参数是目标数值，第三个参数是当前数值的引用，第四个参数是完成变化所需要的时间。第三个参数即引用参数在传递时需要在参数名之前加上ref。此外，设置一个布尔变量AllowInput，如果该值为false，则直接将targetDup等变量都设置为0。
 
+7、动画效果的Blender tree类似于动画效果的集合，其中有参数控制各个动画在总动画中所占的比例。在Animator Controller界面中右键，点选Create state中的New Blender Tree，在右边栏新建Motion，将所需的动画拖拽放入。
+
+8、将动画效果与输入信号相关联。在Ybot的父节点上创造控制组件ActorController，其中有public GameObject model变量，该变量设置为子节点Ybot。还有private Animator anim变量，该变量是Ybot节点中的Animator组件，动画的播放由该组件控制。最后是private UserInput pi变量，该变量是Ybot节点中的UserInput组件，信号由该组件得到。使用语句
+anim = model.GetComponent<Animator> ();得到model底下的组件。最后
+anim.SetFloat("Forward", pi.Dup);将信号与动画效果绑定。
+
+9、进行人物方向的改变。实践证明教程代码存在错误，即transform.forward是不可以用在Dvec的赋值上的，因为Dvec会改变transform.forward的数值。比如按下S键，人物向后转，此时transform.forward已经指向后方，依照Dvec = Dup * transform.forward会出现反复跳变。解决方法是声明private Vector3 Forward和Right变量，分别是固定的(0,0,1)和(1,0,0)，代表坐标的前和右。于是Dvec = Dup * Forward + Dright * Right。在ActorController中model.transform.forward = pi.Dvec。
+
+10、直接写model.transform.forward而不加判断的话存在一个问题，即当Dup和Dright都变为0之后会自动将角色转向前方，此时只需要在前面判断Dlength是否大于某固定值（如0.1），如果大于该值说明有信号输入，开始移动，否则维持原样即可。
+
+11、为了让YBot的父节点即胶囊体也能运动，我们必须为其增加一个rigridbody，在代码中对rigid.position进行控制。
+取rigid.position += speed * movingVec * Time.fixedDeltaTime。
+操作完成之后还出现胶囊体的运动与模型运动不同步的问题，原因是开启了模型Animator组件中的Apply Root Motion，此时需要将其关闭。
+
+12、为跳跃绑定动画。在AnimatorController的BaseLayer中放入跳跃动画，右击Ground类设置Transitions，同理为jump设置。将右边栏transitions展开，拖至最下方为其添加Condition。此前需要为Animator新增Jump参数，设置为Trigger。从Ground到Jump的条件就设置为Jump参数。
+程序中直接引用UserInput中的jump信号，若检测到信号就SetTrigger("jump")。
+
 
