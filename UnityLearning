@@ -33,4 +33,14 @@ anim.SetFloat("Forward", pi.Dup);将信号与动画效果绑定。
 12、为跳跃绑定动画。在AnimatorController的BaseLayer中放入跳跃动画，右击Ground类设置Transitions，同理为jump设置。将右边栏transitions展开，拖至最下方为其添加Condition。此前需要为Animator新增Jump参数，设置为Trigger。从Ground到Jump的条件就设置为Jump参数。
 程序中直接引用UserInput中的jump信号，若检测到信号就SetTrigger("jump")。
 
+13、在跳跃动画中，如果短时间连续按两下跳跃键，会在Jump处形成累积，从而导致动画播放两次。此时在Ground动画右边栏新增一个脚本FSMClearSignals，设置clearAtEnter数组和clearAtExit数组，在OnStateEnter和OnStateExit函数中设置相应的清除语句。为了实现清除Jump累积的目标，我们在进入Ground状态时进行清除，即在OnStateEnter中将所有clearAtEnter中的元素进行ResetTrigger。
+
+14、将跳跃动画信号曝露给主控制器。在Jump动画中新增脚本，在OnStateEnter和OnStateExit函数中调用父节点的函数，即使用JumpEnterEvents和JumpExitEvents数组存放进入/离开jump动画时需要调用的函数名，在两个函数中使用SenMessageUpwards(events)调用父节点函数。
+
+15、在进行跳跃动画时还可以随意转向，这是不合理的。我们需要在JumpEnter函数中禁用Input，即设置pi.AllwoInput = false。同时，当禁用Input之后会使Dlength = 0，也就是movingVec会清零，这是不合理的。设置一个lockMoving变量，当jump = true时不对movingVec进行更新。
+
+16、跳跃的竖直方向的速度设置，如果在FixedUpdate函数中使用rigid.position会出现跳变，目前还没有想到解决的方案，因而转为使用语句
+rigid.velocity = new Vector3(movingVec.x, rigid.velocity.y, movingVec.z) + jumpPower。其中jumpPower代表每一次跳跃为竖直方向所产生的速度。
+于是，在JumpEnter函数中为jumpPower赋值，而改变了rigid.velocity之后要清空jumpPower。
+
 
