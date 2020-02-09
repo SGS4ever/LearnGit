@@ -43,4 +43,6 @@ anim.SetFloat("Forward", pi.Dup);将信号与动画效果绑定。
 rigid.velocity = new Vector3(movingVec.x, rigid.velocity.y, movingVec.z) + jumpPower。其中jumpPower代表每一次跳跃为竖直方向所产生的速度。
 于是，在JumpEnter函数中为jumpPower赋值，而改变了rigid.velocity之后要清空jumpPower。
 
+17、检测碰撞目标。首先创建一个与YBot同级的空物体，在其中创建脚本OnGroundSensor，脚本中记录父节点即胶囊体的信息，包括两个半球的球心和半径，如此可以唯一确认胶囊体。之后利用Unity API：Physics.OverlapCapsule可以检测碰撞，返回参与碰撞的物体数组。
 
+18、当Jump动画退出之后，加在其中的脚本会发送JumpExit信息，设置pi.AllowInput为true，此时由于松开方向键，会使得movingVec清零，变为垂直下落。因而改为进入IsGround状态之后再允许输入。对于OnGroundSensor，只要检测到两物体碰撞，就说明已经到达地面，向控制器发送IsGround信息，重新允许输入。
