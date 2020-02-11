@@ -46,3 +46,11 @@ rigid.velocity = new Vector3(movingVec.x, rigid.velocity.y, movingVec.z) + jumpP
 17、检测碰撞目标。首先创建一个与YBot同级的空物体，在其中创建脚本OnGroundSensor，脚本中记录父节点即胶囊体的信息，包括两个半球的球心和半径，如此可以唯一确认胶囊体。之后利用Unity API：Physics.OverlapCapsule可以检测碰撞，返回参与碰撞的物体数组。
 
 18、当Jump动画退出之后，加在其中的脚本会发送JumpExit信息，设置pi.AllowInput为true，此时由于松开方向键，会使得movingVec清零，变为垂直下落。因而改为进入IsGround状态之后再允许输入。对于OnGroundSensor，只要检测到两物体碰撞，就说明已经到达地面，向控制器发送IsGround信息，重新允许输入。
+
+19、相机旋转采用水平-垂直分开控制的策略。水平旋转由最高级的Model控制，垂直旋转由相机的父节点即CameraHandler控制。水平旋转可以直接使用player.transform.Rotate(Vector3.up, pi.Cright * rotatePower1 * Tome.deltaTome)，可以自由旋转。垂直旋转由一个临时变量tmpEularX帮助实现，原因是需要先使用Mathf.Clamp(tmpEularX, -30, 30)来限制旋转角度，之后直接使用localEularAngles赋值。
+
+20、在相机水平旋转时，不能够旋转模型，因而使用tmpModelAngle记录每一轮update开始时模型的eularAngles，在update的最后将模型eularAngles写为这个临时变量，如此可以保证旋转外壳胶囊体时模型不旋转。在此发现了之前遗留的模型运动方向的问题，因为在UserInput脚本中记录模型前进的方向时简单地采用(0,0,1)向量，导致现在旋转了相机之后模型前进的方向并不是视野前方，实际上模型运动的方向应该是它的父节点即胶囊体的前方，故更正为transform.parent.gameObject.transform.forward。同理更正right方向。
+
+21、设置延迟移动，将Camera放到模型外面，在原本cameraHandle下创建一个cameraPos物件，用以记录camera应处的位置。在cameraControl脚本中利用Camera.main.gameObject获取MainCamera，在其下将camera的transform.position设为当前的position，并利用Vector3.SmoothDamp实现平滑过渡。此时发现移动过程不流畅，将Update函数改为FixedUpdate，解决问题。
+
+
